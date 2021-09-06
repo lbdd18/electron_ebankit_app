@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { Link } from 'react-router-dom'
 
 export const Container = styled.button`
   height: 42px;
@@ -8,15 +9,13 @@ export const Container = styled.button`
   align-items: center;
   justify-content: center;
 
-  background: #8257e6;
+  background: ${({ theme }) => theme.colors.primary};
   border-radius: 8px;
   border: 0;
 
-  color: #FFF;
+  color: ${({ theme }) => theme.colors.onPrimary};
   font-size: 16px;
   font-weight: bold;
-
-  cursor: pointer;
 
   &:hover {
     filter: brightness(0.9);
@@ -24,5 +23,9 @@ export const Container = styled.button`
 
   &:active {
     filter: brightness(0.7);
+  }
+
+  Link {
+
   }
 `
