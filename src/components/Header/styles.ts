@@ -1,9 +1,8 @@
 import styled, { css } from 'styled-components'
 
-
 export const Container = styled.header`
   width: 100%;
-  background-color: ${({ theme }) => theme.colors.background};
+  background-color: ${props => props.theme.palette.primary.dark};
   min-height: 40px;
   position: relative;
   -webkit-app-region: drag;
@@ -13,7 +12,7 @@ export const Container = styled.header`
   strong {
     font-size: 13px;
     font-weight: 400;
-    color: ${({ theme }) => theme.colors.onBackground};
+    color: ${props => props.theme.palette.common.white};
   }
 `
 
@@ -50,9 +49,9 @@ interface MacActionButtonProps {
 }
 
 const colors = {
-  close: ({ theme }) => theme.colors.red,
-  minimize: ({ theme }) => theme.colors.yellow,
-  maximize: ({ theme }) => theme.colors.green
+  close: '#E96379',
+  minimize: '#e7de79',
+  maximize: '#67e480'
 }
 
 export const MacActionButton = styled.button<MacActionButtonProps>`
@@ -92,12 +91,12 @@ export const DefaultActionButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${({ theme }) => theme.colors.onBackground};
+  color: ${props => props.theme.palette.common.white};
   & + button {
     margin-left: 12px;
   }
   &:hover svg {
-    color: ${({ theme }) => theme.colors.onBackground};
+    color: ${props => props.theme.palette.grey.A100};
   }
   &:active {
     opacity: 0.6;

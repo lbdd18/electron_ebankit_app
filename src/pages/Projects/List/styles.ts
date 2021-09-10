@@ -8,16 +8,15 @@ export const Container = styled.div`
 `;
 
 export const Title = styled.label`
-  color: ${({ theme }) => theme.colors.onBackground};
+  color: ${props => props.theme.palette.text.primary};
   height: 400;
   font-size: 2rem;
 `;
 
 export const TableContainer = styled.div`
   display: flex;
-  max-width: 900px;
-  flex-direction: column;
-  margin-top: 2rem;
+  flex-direction: row;
+  margin-top: 16px;
 `;
 
 export const ButtonContainer = styled.div`

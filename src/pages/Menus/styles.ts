@@ -8,7 +8,7 @@ export const Container = styled.div`
 `;
 
 export const Title = styled.label`
-  color: ${({ theme }) => theme.colors.onBackground};
+  color: ${props => props.theme.palette.text.primary};
   height: 400;
   font-size: 2rem;
 `;

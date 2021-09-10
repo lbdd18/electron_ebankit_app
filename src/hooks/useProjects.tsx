@@ -11,7 +11,7 @@ interface Project {
   createdAt: Date;
 }
 
-type ProjectInput = Omit<Project, 'id' | 'createdAt'>;
+type ProjectInput = Omit<Project, 'createdAt'>;
 
 interface ProjectsProviderProps {
   children: ReactNode;
@@ -20,7 +20,8 @@ interface ProjectsProviderProps {
 interface ProjectsContextData {
   projects: Project[],
   createProject: (project: ProjectInput) => Promise<void>,
-  deleteProject: (projectID: string) => Promise<void>
+  deleteProject: (projectID: string) => Promise<void>,
+  installProject: (project: ProjectInput) => Promise<void>,
 }
 
 const ProjectsContext = createContext<ProjectsContextData>(
@@ -53,8 +54,35 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
     setProjects(projects);
   }
 
+  async function installProject(projectInput: ProjectInput){
+    const { dialog } = require('electron').remote
+    dialog.showOpenDialog({ properties: ['openDirectory'] })
+      .then(response => {
+        const projectPath = response.filePaths[0];
+        // Get and Install projects
+        const filePath = `${projectPath}//TestFolder`
+
+        if (!fs.existsSync(filePath)) {
+          fs.mkdirSync(filePath, {
+            recursive: true
+          });
+        }
+
+        fs.writeFile(`${filePath}//project-${projectInput.alias}.txt`, projectInput.alias, (err) => {
+          if (err) throw err;
+          console.log('Project saved!');
+        });
+        
+        // Get and Install Configuration files
+        // Get and Install Sites
+        // Get and Install Databases
+        console.log(response.filePaths)
+        console.log(projectInput);
+      });
+  }
+
   return (
-    <ProjectsContext.Provider value={{ projects, createProject, deleteProject}}>
+    <ProjectsContext.Provider value={{ projects, createProject, deleteProject, installProject}}>
       {children}
     </ProjectsContext.Provider>
   )

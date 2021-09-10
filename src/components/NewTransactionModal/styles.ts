@@ -1,9 +1,8 @@
 import styled from "styled-components";
-import { darken, transparentize } from 'polished'
 
 export const Container = styled.form`
   h2 {
-    color: ${({ theme }) => theme.colors.onBackground};
+    color: ${props => props.theme.palette.text.primary};
     font-size: 1.5rem;
     margin-bottom: 2rem;
   }
@@ -21,7 +20,7 @@ export const Container = styled.form`
     font-size: 1rem;
 
     &::placeholder {
-      color: ${({ theme }) => theme.colors.textBody};
+      color: ${props => props.theme.palette.onBackground}
     }
 
     & + input {
@@ -33,8 +32,8 @@ export const Container = styled.form`
     width: 100%;
     padding: 0 1.5rem;
     height: 4rem;
-    background: ${({ theme }) => theme.colors.primary};
-    color: ${({ theme }) => theme.colors.onPrimary};
+    background: ${props => props.theme.palette.primary};
+    color: ${props => props.theme.palette.onPrimary};
     border-radius: 0.25rem;
     border: 0;
     font-weight: 600;

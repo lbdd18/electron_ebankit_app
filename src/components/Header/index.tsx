@@ -50,7 +50,7 @@ const Header: React.FC = () => {
 
 
   const shouldUseMacOSWindowActions = useMemo(() => {
-    return true;
+    return os.platform() === 'darwin';
   }, [])
 
   return (

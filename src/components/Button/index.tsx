@@ -1,11 +1,7 @@
-import { ReactNode, ButtonHTMLAttributes } from 'react'
+import { ButtonProps } from '@material-ui/core';
 
-import { Container } from './styles'
-
-type ButtonProps = {
-  children: ReactNode;
-} & ButtonHTMLAttributes<HTMLButtonElement>;
+import { ButtonContainer } from './styles'
 
 export function Button (props: ButtonProps) {
-  return <Container type="button" {...props} />
+  return <ButtonContainer {...props} />
 }

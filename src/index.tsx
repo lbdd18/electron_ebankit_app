@@ -11,12 +11,20 @@ createServer({
 
   seeds(server) {
     server.create("project", {
-    id: "1",
-    name: 'Menu Standard',
-    alias: 'IB',
-    description: 'IB',
-    createdAt: new Date('2021-02-12')
-  })
+      id: "1",
+      name: 'Canadian Layer',
+      alias: 'CNL',
+      description: 'Canadian Layer Description',
+      createdAt: new Date('2021-02-12')
+    })
+
+    server.create("project", {
+      id: "2",
+      name: 'IBM Layer',
+      alias: 'IBM',
+      description: 'IBM Layer Description',
+      createdAt: new Date('2021-02-12')
+    })
 
     server.create("menu", {
       id: "1",
@@ -37,7 +45,8 @@ createServer({
     this.namespace = "api";
 
     this.get('/projects', (schema) => {
-      return schema.projects.all();
+      const projects = schema.projects.all();
+      return projects;
     })
 
     this.get('/menus', (schema) => {

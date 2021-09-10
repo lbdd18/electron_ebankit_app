@@ -1,14 +1,16 @@
 import { useState } from 'react';
 
-import { MenusProvider } from '../../hooks/useMenus';
+import { MenusProvider, useMenus } from '../../hooks/useMenus';
 
 import {NewTransactionModal} from '../../components/NewTransactionModal'
-import {TransactionsTable} from '../../components/TransactionsTable'
 import { Button } from '../../components/Button';
 import { ButtonContainer, Container, TableContainer, Title } from './styles';
+import { TransactionsTable } from '../../components/TransactionsTable';
+
 
 export function Menus() {
   const [isNewTransactionModalOpen, setIsNewTransactionModalOpen] = useState(false);
+  const { menus } = useMenus();
 
   function handleOpenNewTransactionModal() {
     setIsNewTransactionModalOpen(true)
@@ -17,6 +19,10 @@ export function Menus() {
   function handleCloseNewTransactionModal() {
     setIsNewTransactionModalOpen(false);
   }
+
+  
+  console.log("My Menus-",menus);
+
 
   return (
     <MenusProvider>

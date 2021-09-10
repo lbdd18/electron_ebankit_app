@@ -1,4 +1,4 @@
-import {ThemeProvider} from 'styled-components'
+import { useState } from 'react';
 import Modal from 'react-modal'
 import {
   HashRouter,
@@ -6,57 +6,73 @@ import {
   Route
 } from "react-router-dom";
 
+import { ThemesProvider } from './hooks/useThemes';
+
 import { GlobalStyle } from './styles/global'
-import { lightTheme, darkTheme } from './styles/Themes'
 import {AppContent, Body, Container, Content } from './styles'
 
 import Header from './components/Header'
 import { Navbar } from './components/Navbar'
-
+import { Authentication } from './pages/Authentication'
+import { Register } from './pages/Authentication/Register'
 import { Menus } from './pages/Menus';
-import { Projects } from './pages/Projects/List';
+import { Projects } from './pages/Projects';
 import { Dashboard } from './pages/Dashboard';
 import { CreateProject } from './pages/Projects/Create';
-import { useState } from 'react';
 
 Modal.setAppElement('#root')
 
+
+
+
 export function App() {
-  const [theme, setTheme] = useState('dark');
-  const themeToggler = () => {
-    theme === 'light' ? setTheme('dark') : setTheme('light')
+  const [token, setToken] = useState();
+
+  function unAuthorizedRoutes(){
+    return(
+      <Container>
+        <Content>
+          <Authentication setToken={setToken}/>
+        </Content>
+      </Container>
+    )
   }
+
+  function authorizedRoutes(){
+    return(
+      <Container>
+      <Navbar setToken={setToken}/>
+      <Content>
+        <Switch>
+          <Route path="/projects">
+            <Projects />
+          </Route>
+          <Route path="/createproject">
+            <CreateProject />
+          </Route>
+          <Route path="/menus">
+            <Menus />
+          </Route>
+          <Route path="/">
+            <Dashboard />
+          </Route>
+        </Switch>
+      </Content>
+    </Container>
+    )
+  }
+
   return (
     <AppContent>
-
-<HashRouter>
-    <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
-        <Body>
-          <Header />
-          <Container>
-            <Navbar />
-            <Content>
-              <Switch>
-                <Route path="/projects">
-                  <Projects />
-                </Route>
-                <Route path="/createproject">
-                  <CreateProject />
-                </Route>
-                <Route path="/menus">
-                  <Menus />
-                </Route>
-                <Route path="/">
-                  <Dashboard />
-                  <button onClick={themeToggler}>Switch Theme</button>
-                </Route>
-              </Switch>
-            </Content>
-          </Container>
-        </Body>
+      <HashRouter>
+        <ThemesProvider>
+          <Body>
+            <Header />
+            {token ? authorizedRoutes() : unAuthorizedRoutes()}
+          </Body>
           <GlobalStyle />
-      </ThemeProvider>
-    </HashRouter>
+        </ThemesProvider>
+      </HashRouter>
     </AppContent>
   )
 }

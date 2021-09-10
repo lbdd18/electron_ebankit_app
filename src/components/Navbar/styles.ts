@@ -15,13 +15,13 @@ export const ButtonHeader = styled.button`
   height: 40px;
   width: 40px;
   border: 0;
-  color: ${({ theme }) => theme.colors.onBackground};
-  background-color: ${({ theme }) => theme.colors.background};
+  color: var(--onBackground);
+  background-color: var(--background);
 `
 
-export const LogoHeader = styled.img`
+export const LogoHeader = styled.svg`
   height: 70%;
   margin-right: 16px;
-  color: ${({ theme }) => theme.colors.onBackground};
-  background-color: ${({ theme }) => theme.colors.background};
+  fill: red;
+  background-color: var(--background);
 `

@@ -1,11 +1,17 @@
 import { createGlobalStyle } from 'styled-components'
+import { useTheme } from '@material-ui/core/styles';
+
+const backgroundNavbar = props => props.theme.palette.background.paper;
+const textNavbar = props => props.theme.palette.text.primary;
+const surfaceColor = props => props.theme.palette.background.default;
+const onSurfaceColor = props => props.theme.palette.text.primary;
 
 export const GlobalStyle = createGlobalStyle`
   :root {
-    --background: ${({ theme }) => theme.colors.background};
-    --onBackground: ${({ theme }) => theme.colors.onBackground};
-    --surface: ${({ theme }) => theme.colors.surface};
-    --onSurface: ${({ theme }) => theme.colors.onSurface};
+    --background: ${backgroundNavbar};
+    --onBackground: ${textNavbar};
+    --surface: ${surfaceColor};
+    --onSurface: ${onSurfaceColor};
   }
   * {
     margin: 0;
@@ -24,7 +30,7 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    background: ${({ theme }) => theme.colors.background};
+    background: ${props => props.theme.palette.background};
     -webkit-font-smoothing: antialiased;
   }
 
@@ -64,7 +70,7 @@ export const GlobalStyle = createGlobalStyle`
   .react-modal-content {
     width: 100%;
     max-width: 576px;
-    background: ${({ theme }) => theme.colors.background};
+    background: ${props => props.theme.palette.background.default};
     padding: 3rem;
     position: relative;
     border-radius: 0.25rem;
