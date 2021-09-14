@@ -23,7 +23,7 @@ export function Navbar({ setToken }: any){
                 <ButtonHeader onClick={showSidebar}>{<FiMenu />}</ButtonHeader>
               ) : (
                 <>
-                <LogoHeader path={logoImg}/>
+                <LogoHeader src={logoImg}/>
                 <ButtonHeader onClick={showSidebar}>{<FiMenu />}</ButtonHeader>
                 </>
               )}

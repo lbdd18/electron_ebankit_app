@@ -8,10 +8,7 @@ interface Project {
   name: string;
   alias: string;
   description: string;
-  createdAt: Date;
 }
-
-type ProjectInput = Omit<Project, 'createdAt'>;
 
 interface ProjectsProviderProps {
   children: ReactNode;
@@ -19,9 +16,9 @@ interface ProjectsProviderProps {
 
 interface ProjectsContextData {
   projects: Project[],
-  createProject: (project: ProjectInput) => Promise<void>,
+  createProject: (project: Project) => Promise<void>,
   deleteProject: (projectID: string) => Promise<void>,
-  installProject: (project: ProjectInput) => Promise<void>,
+  installProject: (project: Project) => Promise<void>,
 }
 
 const ProjectsContext = createContext<ProjectsContextData>(
@@ -32,12 +29,12 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
   const [projects, setProjects] = useState<Project[]>([]);
 
   useEffect(() => {
-    api.get('projects')
-      .then(response => setProjects(response.data.projects))
+    api.get('project')
+      .then(response => {console.log(response.data);setProjects(response.data)})
   }, [])
 
-  async function createProject(projectInput: ProjectInput) {
-    const response = await api.post('projects', { ...projectInput, createdAt: new Date() });
+  async function createProject(projectInput: Project) {
+    const response = await api.post('project', { ...projectInput, createdAt: new Date() });
 
     fs.writeFile(`c://temp//project-${projectInput.alias}.txt`, projectInput.alias, (err) => {
       if (err) throw err;
@@ -49,12 +46,12 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
   }
 
   async function deleteProject(projectID: string) {
-    const response = await api.delete(`projects/${projectID}`);
+    const response = await api.delete(`project/${projectID}`);
     const { projects } = response.data;
     setProjects(projects);
   }
 
-  async function installProject(projectInput: ProjectInput){
+  async function installProject(projectInput: Project){
     const { dialog } = require('electron').remote
     dialog.showOpenDialog({ properties: ['openDirectory'] })
       .then(response => {

@@ -31,27 +31,30 @@ export function MenusProvider({ children }: MenusProviderProps) {
   const [menus, setMenus] = useState<Menu[]>([]);
 
   useEffect(() => {
-    api.get('menus')
-      .then(response => setMenus(response.data.menus))
+    api.get('menu')
+      .then(response => setMenus(response.data))
   }, [])
 
   async function createMenu(menuInput: MenuInput) {
-    const response = await api.post('menus', { ...menuInput, createdAt: new Date() });
+    const response = await api.post('menu', { ...menuInput, createdAt: new Date() });
     const { menu } = response.data;
     setMenus([...menus, menu])
   }
 
   async function deleteMenu(menuID: string) {
-    const response = await api.delete(`menus/${menuID}`);
+    const response = await api.delete(`menu/${menuID}`);
     const { menus } = response.data;
     setMenus(menus);
   }
 
   async function exportMenu(menuID: string) {
-    fs.writeFile(`c://temp//menu-${menuID}.txt`, menuID, (err) => {
-      if (err) throw err;
-      console.log('Menu saved!');
-    });
+    api.get(`menu/${menuID}/exportfile`)
+      .then(response => {
+        fs.writeFile(`c://temp//menu-${menuID}.txt`, Buffer.from(response.data, "base64").toString(), (err) => {
+          if (err) throw err;
+          console.log('Menu saved!');
+        });
+      })
   }
 
   return (

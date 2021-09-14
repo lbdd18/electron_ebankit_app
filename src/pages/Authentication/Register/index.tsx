@@ -1,5 +1,6 @@
 
 import {Button, Grid} from '@material-ui/core'
+import { Link } from 'react-router-dom';
 
 import { Container, Title } from "./styles";
 
@@ -13,11 +14,11 @@ export function Register({setToken}) {
     <Container>
       <Grid spacing={2}>
         <Grid item>
-          <Title> Register</Title>
+          <Title>Register</Title>
         </Grid>
-        <Grid item>
-          <Button variant="contained" color="primary" onClick={handleRegister} >Register</Button>
-        </Grid>
+        <Link to="/login" style={{ textDecoration: 'none' }} >
+          <Button variant="contained" color="primary">Login</Button>
+        </Link>
       </Grid>
     </Container>
   )

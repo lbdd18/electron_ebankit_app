@@ -14,7 +14,7 @@ export function ListProjects() {
         <TableContainer>
           {projects.map(project=> {
             return (
-              <Box paddingRight={2} key={project.id}>
+              <Box paddingRight={2} key={project.id} maxWidth="300px">
                 <Card>
                   <CardMedia component="img" height="140" image="https://viagemeturismo.abril.com.br/wp-content/uploads/2011/09/14725706608_06a62c13c6_k.jpg" alt="green iguana"/>
                   <CardContent>
