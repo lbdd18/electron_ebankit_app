@@ -1,13 +1,56 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import * as fs from 'fs';
+import * as cmd from 'child_process';
+import os from 'os'
+import extract from 'extract-zip';
 
 import { api } from "../services/api";
+import { useSnackbar } from "notistack";
 
 interface Project {
+  id: string;
+  name: string;
+  template: string;
+  version: string;
+  description: string;
+  alias: string;
+  author: string;
+  customer: string;
+  instance: string;
+  sqlUser: string;
+  sqlPassword: string;
+  isInstalled: boolean;
+}
+
+interface Environment {
   id: number;
   name: string;
-  alias: string;
+  instance: string;
+  sqlUser: string;
+  sqlPassword: string;
+}
+
+
+interface Package {
+  id: number;
+  name: string;
   description: string;
+  path: string;
+  templateName: string;
+}
+
+interface PackageFile {
+  name: string;
+  path: string;
+  fileType: {
+    name: string;
+    extension: string;
+  };
+}
+
+interface Database {
+  id: number;
+  name: string;
 }
 
 interface ProjectsProviderProps {
@@ -26,6 +69,7 @@ const ProjectsContext = createContext<ProjectsContextData>(
 );
 
 export function ProjectsProvider({ children }: ProjectsProviderProps) {
+  const { enqueueSnackbar } = useSnackbar();
   const [projects, setProjects] = useState<Project[]>([]);
 
   useEffect(() => {
@@ -34,15 +78,38 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
   }, [])
 
   async function createProject(projectInput: Project) {
-    const response = await api.post('project', { ...projectInput, createdAt: new Date() });
+    try {
+      console.log(projectInput);
+      const responseEnvironment = await api.post('environment', { 
+        Name: `DEV-${projectInput.alias}`,
+	      DataSource: projectInput.instance,
+	      SQLUser: projectInput.sqlUser,
+	      SQLPassword: projectInput.sqlPassword,
+        DatabasePrefix: projectInput.alias
+      });
 
-    fs.writeFile(`c://temp//project-${projectInput.alias}.txt`, projectInput.alias, (err) => {
-      if (err) throw err;
-      console.log('Project saved!');
-    });
+      const environment : Environment = responseEnvironment.data;
 
-    const { project } = response.data;
-    setProjects([...projects, project])
+      const response = await api.post('project', { 
+        Name: projectInput.name,
+	      Description: projectInput.description,
+	      Alias: projectInput.alias,
+	      Author: projectInput.author,
+	      Customer: projectInput.customer,
+	      StartProjectDate: new Date(),
+	      BaselineProjectDate: new Date(),
+	      TemplateID: projectInput.template,
+	      EnvironmentID: environment.id,
+	      VersionControlID: null,
+	      VersionSettingID: projectInput.version
+      });
+
+      const project = response.data;
+      setProjects([...projects, project]);
+      enqueueSnackbar('Project created successfully!', { variant:'success', anchorOrigin:{vertical: 'bottom', horizontal: 'right',} });
+    } catch (error) {
+      enqueueSnackbar('Project not created!', { variant:'error', anchorOrigin:{vertical: 'bottom', horizontal: 'right',} });
+    }
   }
 
   async function deleteProject(projectID: string) {
@@ -51,31 +118,139 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
     setProjects(projects);
   }
 
-  async function installProject(projectInput: Project){
-    const { dialog } = require('electron').remote
-    dialog.showOpenDialog({ properties: ['openDirectory'] })
+  function execShellCommand(cmd: string) {
+    const exec = require('child_process').exec;
+    return new Promise((resolve, reject) => {
+     exec(cmd, (error, stdout, stderr) => {
+      if (error) {
+       console.warn(error);
+      }
+      resolve(stdout || stderr);
+     });
+    });
+  }
+
+  async function runningDBDeploy(filePath: string){
+    console.log(`Running dbdeploy...`);
+    await api.get(`dbdeployfile`)
+          .then(response => {
+            const buff = Buffer.from(response.data, "base64");
+            fs.writeFile(`${filePath}\\scripts\\DBDeploy.ps1`, buff, (err) => {
+              if (err) throw err;
+            });
+          })
+    const command = `C:\\Windows\\syswow64\\windowspowershell\\v1.0\\powershell.exe  -ExecutionPolicy Unrestricted -file "${filePath}\\scripts\\DBDeploy.ps1" -ScriptsDirectory "${filePath}\\scripts" -ServerInstance "EBKNTBOOK-0683\\MYSQLEXPRESS" -DestinationDBPrefix "AB_" -DBUsername "sa" -DBPassword "pass123456."`; 
+    
+    await execShellCommand(command);
+  }
+
+  async function installProjectFiles(filePath: string, projectInput: Project){
+    let packages: Package [] = []
+    await api.get('package')
+    .then(response => {packages = response.data});
+    for (const pack of packages) {
+      // Get and Install packages
+      console.log(`Downloading package ${pack.name}...`);
+      await api.get(`package/${pack.name}/file`)
       .then(response => {
-        const projectPath = response.filePaths[0];
-        // Get and Install projects
-        const filePath = `${projectPath}//TestFolder`
-
-        if (!fs.existsSync(filePath)) {
-          fs.mkdirSync(filePath, {
-            recursive: true
-          });
-        }
-
-        fs.writeFile(`${filePath}//project-${projectInput.alias}.txt`, projectInput.alias, (err) => {
+        const buff = Buffer.from(response.data, "base64");
+        fs.writeFile(`${filePath}\\${pack.name}.zip`, buff, (err) => {
           if (err) throw err;
-          console.log('Project saved!');
         });
+      })
+      console.log(`Extracting package ${pack.name}...`);
+      await extract(`${filePath}\\${pack.name}.zip`, { dir: filePath })
+      console.log(`Deleting file ${pack.name}...`);
+      fs.unlinkSync(`${filePath}\\${pack.name}.zip`);
+
+      // Get and Install Configuration files
+      let packageFiles: PackageFile [] = []
+      await api.get('packageFile', {
+        headers: {
+          'packageID': pack.id
+        }
+      })
+      .then(response => {console.log(pack.id);console.log(response.data);packageFiles = response.data});
+      for (const packFile of packageFiles) {
+        console.log(`Downloading package File ${packFile.name}...`);
+        await api.get(`packagefile/${packFile.fileType.name}/packagetemplate/${pack.templateName}/file`, {
+          headers: {
+            'projectName': projectInput.name,
+            'projectAlias': projectInput.alias,
+            'projectID': projectInput.id
+          }
+        })
+        .then(response => {
+          const buff = Buffer.from(response.data, "base64");
+          fs.writeFile(`${filePath}\\${packFile.path}\\${packFile.name}.${packFile.fileType.extension}`, buff, (err) => {
+            if (err) throw err;
+          });
+        })
+      }
+    }
+  }
+
+  async function installDatabases(filePath: string, projectInput: Project){
+    let databases: Database [] = []
+    await api.get('database')
+    .then(response => {databases = response.data});
+
+    for (const data of databases) {
+      console.log(`Downloading database ${data.name}...`);
+      await api.get(`database/${data.name}/file`)
+      .then(response => {
+        const buff = Buffer.from(response.data, "base64");
+        fs.writeFile(`${filePath}\\${data.name}.zip`, buff, (err) => {
+          if (err) throw err;
+        });
+      })
+      console.log(`Extracting database ${data.name}...`);
+      await extract(`${filePath}\\${data.name}.zip`, { dir: `${filePath}\\Scripts` })
+      console.log(`Deleting file ${data.name}...`);
+      fs.unlinkSync(`${filePath}\\${data.name}.zip`);
+    };
+
+    await runningDBDeploy(filePath);
+    console.log('dbdeploy runned!');
+  }
+
+  async function installProject(projectInput: Project){
+    
+    const { dialog } = require('electron').remote
+
+    await dialog.showOpenDialog({ properties: ['openDirectory'] })
+      .then(async response => {
+        try {
+          const projectPath = response.filePaths[0];
+          const filePath = `${projectPath}\\eBankit.${projectInput.alias}\\Main\\Source`
+          if (!fs.existsSync(filePath)) {
+            fs.mkdirSync(filePath, {
+              recursive: true
+            });
+          }
+
+          // Get and Install Project Files
+          await installProjectFiles(filePath, projectInput);
+
+          if (os.platform() !== 'darwin') {
+            // Get and Install Sites
+          
+            // Get and Install Databases
+            await installDatabases(filePath, projectInput);
+          }
+
+          await api.put(`project/${projectInput.id}`, { 
+            ...projectInput, isInstalled: true
+          }).then(response => {
+              api.get('project')
+                .then(response => {console.log(response.data);setProjects(response.data)})
+          });
+          enqueueSnackbar('Project intalled successfully!', { variant:'success', anchorOrigin:{vertical: 'bottom', horizontal: 'right',} });
+        } catch (error) {
+          enqueueSnackbar('Project not installed!', { variant:'error', anchorOrigin:{vertical: 'bottom', horizontal: 'right',} });
+        }
         
-        // Get and Install Configuration files
-        // Get and Install Sites
-        // Get and Install Databases
-        console.log(response.filePaths)
-        console.log(projectInput);
-      });
+      }) 
   }
 
   return (

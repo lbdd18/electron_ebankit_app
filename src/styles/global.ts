@@ -1,5 +1,4 @@
 import { createGlobalStyle } from 'styled-components'
-import { useTheme } from '@material-ui/core/styles';
 
 const backgroundNavbar = props => props.theme.palette.background.paper;
 const textNavbar = props => props.theme.palette.text.primary;

@@ -1,12 +1,12 @@
 import { FormEvent, useState } from 'react'
 import Modal from 'react-modal'
 
-import incomeImg from '../../assets/income.svg'
-import outcomeImg from '../../assets/outcome.svg'
 import closeImg from '../../assets/close.svg'
 
-import { Container, Select} from './styles'
+import { Container} from './styles'
 import { useMenus } from '../../hooks/useMenus'
+import { Box, MenuItem, TextField } from '@material-ui/core'
+import { Button } from '../Button'
 
 interface NewTransactionModalProps {
   isOpen: boolean;
@@ -23,7 +23,7 @@ export function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionMo
     event.preventDefault();
     await createMenu({ name, application });
     setName('');
-    setApplication('deposit');
+    setApplication('');
     onRequestClose();
   }
 
@@ -38,16 +38,17 @@ export function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionMo
       </button>
       <Container onSubmit={handleCreateNewTransaction}>
         <h2>New Menu</h2>
-        <input placeholder="Name" value={name} onChange={event => setName(event.target.value)} />
-        <Select value={application} onChange={event => setApplication(event.target.value)}>
-          <option value="" hidden>
-            Application
-          </option>
-          <option value="IB">IB</option>
-          <option value="IOS">IOS</option>
-          <option value="Android">Android</option>
-        </Select>
-        <button type="submit">Add</button>
+        <Box paddingBottom={2}>
+          <TextField fullWidth variant='outlined' label='Name' value={name} onChange={event => setName(event.target.value)} />
+        </Box>
+        <Box>
+          <TextField fullWidth={true} variant="outlined" name="application" type="text" label="Application" select={true} onChange={event => setApplication(event.target.value)}>
+            <MenuItem value="f04f94ee-6589-46fb-8d3a-bf1ed0a0bdba">IB</MenuItem>
+            <MenuItem value="a0bc5b1c-dfad-4546-b05b-144cd4cb6c46">IOS</MenuItem>
+            <MenuItem value="1acd96e0-ce45-40bc-9138-b33c66e47a6d">Android</MenuItem>
+          </TextField>
+        </Box>
+        <Button type="submit" variant='contained' color='primary'>Add</Button>
       </Container>
     </Modal>
   )

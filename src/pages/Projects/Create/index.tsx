@@ -1,32 +1,75 @@
-import React, { useState } from 'react';
-import * as fs from 'fs';
-import * as cmd from 'child_process';
+import React, { useState, FormEvent } from 'react';
 
 import {Box, Stepper, Step, StepLabel, Grid, CircularProgress, MenuItem, FormControlLabel, Radio} from '@material-ui/core'
 import {Field, Form, Formik, FormikConfig, FormikValues} from 'formik'
 import {TextField, RadioGroup} from 'formik-material-ui'
+import { useHistory } from "react-router-dom";
 import { object, string} from 'yup'
+import { api } from "../../../services/api"
 
 import { Container} from './styles'
 import { Button } from '../../../components/Button';
+import { useSnackbar } from 'notistack';
 
-const sleep = (time) => new Promise((acc)=> setTimeout(acc, time));
+interface Environment {
+  id: number;
+  name: string;
+  instance: string;
+  sqlUser: string;
+  sqlPassword: string;
+}
 
 export function CreateProject() {
+  const { enqueueSnackbar } = useSnackbar();
+  const history = useHistory();
 
-  function handleGenerateFile() {
-    fs.writeFile('c://temp//file.txt', "myfiledata", (err) => {
-      if (err) throw err;
-      console.log('File saved!');
-    });
-  }
+  const handleSubmit = async (values, actions) => {
+    const projectInput = {
+      id: '',
+      name: values.name,
+      template: values.template,
+      version: values.version,
+      description: values.description,
+      alias: values.alias,
+      author: values.author,
+      customer: values.customer,
+      instance: values.instance,
+      sqlUser: values.user,
+      sqlPassword: values.password
+    }
 
-  function handleRunCommand() {
-    cmd.exec("mkdir \"C:\\temp\\newTemp\"", (error, stdout, stderr) => {
-      
-      if (error) throw error;
-      console.log('CMD executed!');
-    });
+    try {
+      console.log(projectInput);
+      const responseEnvironment = await api.post('environment', { 
+        Name: `DEV-${projectInput.alias}`,
+	      DataSource: projectInput.instance,
+	      SQLUser: projectInput.sqlUser,
+	      SQLPassword: projectInput.sqlPassword,
+        DatabasePrefix: projectInput.alias
+      });
+
+      const environment : Environment = responseEnvironment.data;
+
+      const response = await api.post('project', { 
+        Name: projectInput.name,
+	      Description: projectInput.description,
+	      Alias: projectInput.alias,
+	      Author: projectInput.author,
+	      Customer: projectInput.customer,
+	      StartProjectDate: new Date(),
+	      BaselineProjectDate: new Date(),
+	      TemplateID: projectInput.template,
+	      EnvironmentID: environment.id,
+	      VersionControlID: 'c1f1bcb3-0101-4196-ab3f-8a04975e641c',
+	      VersionSettingID: projectInput.version
+      });
+
+      // const project = response.data;
+      history.push("/projects");
+      enqueueSnackbar('Project created successfully!', { variant:'success', anchorOrigin:{vertical: 'bottom', horizontal: 'right',} });
+    } catch (error) {
+      enqueueSnackbar('Project not created!', { variant:'error', anchorOrigin:{vertical: 'bottom', horizontal: 'right',} });
+    }
   }
 
   return (
@@ -44,10 +87,7 @@ export function CreateProject() {
             user: '',
             password: ''
           }} 
-          onSubmit={async(values)=> {
-            await sleep(3000);
-            console.log('values', values);
-          }}
+          onSubmit={handleSubmit}
         >
               <FormikStep label="Details"
                 validationSchema={object({
@@ -64,12 +104,12 @@ export function CreateProject() {
                 </Box>
                 <Box paddingBottom={2}>
                 <Field fullWidth={true} variant="outlined" name="template" component={TextField} type="text" label="Template" select={true}>
-                  <MenuItem value="ebankit">Ebankit</MenuItem>
+                  <MenuItem value="62f76b65-b6f7-48d3-b55c-0876bd1ba6ad">Ebankit</MenuItem>
                 </Field>
                 </Box>
                 <Box paddingBottom={2}>
                   <Field fullWidth={true} variant="outlined" name="version" component={TextField} type="text" label="Version" select={true}>
-                    <MenuItem value="1">6.2.0</MenuItem>
+                    <MenuItem value="5dfa256f-d6a3-41ad-922e-1f6ece1abd3f">6.2.0</MenuItem>
                   </Field>                
                 </Box>
                 <Box paddingBottom={2}>

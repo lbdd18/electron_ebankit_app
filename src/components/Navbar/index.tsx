@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ProSidebar, SidebarHeader, SidebarContent, SidebarFooter, Menu, MenuItem } from 'react-pro-sidebar';
 import { FiMenu, FiLogOut} from "react-icons/fi";
 
-import logoImg from '../../assets/sidebar_logo.svg'
+import logoImg from '../../assets/sidebar_logo2.svg'
 
 import { Container, HeaderContainer, ButtonHeader, LogoHeader } from "./styles";
 import './variables.scss'

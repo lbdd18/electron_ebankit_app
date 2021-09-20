@@ -1,16 +1,14 @@
 import { useState } from 'react';
 
-import { MenusProvider, useMenus } from '../../hooks/useMenus';
+import { MenusProvider } from '../../hooks/useMenus';
 
 import {NewTransactionModal} from '../../components/NewTransactionModal'
 import { Button } from '../../components/Button';
-import { ButtonContainer, Container, TableContainer, Title } from './styles';
-import { TransactionsTable } from '../../components/TransactionsTable';
-
+import { ButtonContainer, Container, TableContainer, Title, ContainerHeader } from './styles';
+import { DataGrid } from '../../components/DataGrid';
 
 export function Menus() {
   const [isNewTransactionModalOpen, setIsNewTransactionModalOpen] = useState(false);
-  const { menus } = useMenus();
 
   function handleOpenNewTransactionModal() {
     setIsNewTransactionModalOpen(true)
@@ -19,21 +17,19 @@ export function Menus() {
   function handleCloseNewTransactionModal() {
     setIsNewTransactionModalOpen(false);
   }
-
   
-  console.log("My Menus-",menus);
-
-
   return (
     <MenusProvider>
       <Container>
+        <ContainerHeader>
         <Title>Menus</Title>
-        <TableContainer>
-          <TransactionsTable />
-        </TableContainer>
         <ButtonContainer>
-          <Button onClick={handleOpenNewTransactionModal}>New Menu</Button>
+          <Button color="primary" variant="contained" onClick={handleOpenNewTransactionModal}>New Menu</Button>
         </ButtonContainer>
+          </ContainerHeader>
+        <TableContainer>
+          <DataGrid/>
+        </TableContainer>
       </Container>
       <NewTransactionModal isOpen={isNewTransactionModalOpen} onRequestClose={handleCloseNewTransactionModal} />
     </MenusProvider>

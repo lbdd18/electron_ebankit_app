@@ -7,6 +7,10 @@ export const Container = styled.div`
   margin: 4rem;
 `;
 
+export const ContainerHeader = styled.div`
+  display: flex;
+`;
+
 export const Title = styled.label`
   color: ${props => props.theme.palette.text.primary};
   height: 400;
@@ -22,5 +26,7 @@ export const TableContainer = styled.div`
 
 export const ButtonContainer = styled.div`
   display: flex;
-  margin-top: 2rem;
+  flex: 1;
+  align-items: flex-end;
+  justify-content: flex-end;
 `;

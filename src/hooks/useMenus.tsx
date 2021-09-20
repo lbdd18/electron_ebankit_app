@@ -1,12 +1,18 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import * as fs from 'fs';
+import { useSnackbar } from 'notistack';
 
 import { api } from "../services/api";
+
+interface Application {
+  id: number;
+  name: string;
+}
 
 interface Menu {
   id: number;
   name: string;
-  application: string;
+  application: Application;
   createdAt: Date;
 }
 
@@ -28,33 +34,55 @@ const MenusContext = createContext<MenusContextData>(
 );
 
 export function MenusProvider({ children }: MenusProviderProps) {
+  const { enqueueSnackbar } = useSnackbar();
   const [menus, setMenus] = useState<Menu[]>([]);
 
   useEffect(() => {
     api.get('menu')
-      .then(response => setMenus(response.data))
+      .then(response => {setMenus(response.data)})
   }, [])
 
   async function createMenu(menuInput: MenuInput) {
-    const response = await api.post('menu', { ...menuInput, createdAt: new Date() });
-    const { menu } = response.data;
-    setMenus([...menus, menu])
+    try {
+      const response = await api.post('menu', { name: menuInput.name, applicationID: menuInput.application, projectID: '6229fc71-8152-4d8f-99b8-d61268a29a49' });
+      const menu = response.data;
+      setMenus([...menus, menu]);
+      enqueueSnackbar('Menu created successfully!', { variant:'success', anchorOrigin:{vertical: 'bottom', horizontal: 'right',} });
+    } catch (error) {
+      enqueueSnackbar('Menu not created!', { variant:'error', anchorOrigin:{vertical: 'bottom', horizontal: 'right',} });
+    }
+    
   }
 
   async function deleteMenu(menuID: string) {
-    const response = await api.delete(`menu/${menuID}`);
-    const { menus } = response.data;
-    setMenus(menus);
+    try {
+      await api.delete(`menu/${menuID}`);
+      await api.get('menu')
+      .then(response => setMenus(response.data));
+      enqueueSnackbar('Menu deleted successfully!', { variant:'success', anchorOrigin:{vertical: 'bottom', horizontal: 'right',} });
+    } catch (error) {
+      enqueueSnackbar('Menu not deleted!', { variant:'error', anchorOrigin:{vertical: 'bottom', horizontal: 'right',} });
+    }
+    
   }
 
   async function exportMenu(menuID: string) {
-    api.get(`menu/${menuID}/exportfile`)
-      .then(response => {
-        fs.writeFile(`c://temp//menu-${menuID}.txt`, Buffer.from(response.data, "base64").toString(), (err) => {
-          if (err) throw err;
-          console.log('Menu saved!');
-        });
+    const { dialog } = require('electron').remote
+    try {
+      await dialog.showOpenDialog({ properties: ['openDirectory'] })
+      .then(async response => {
+        const projectPath = response.filePaths[0];
+        await api.get(`menu/${menuID}/exportfile`)
+          .then(response => {
+            fs.writeFile(`${projectPath}//menu.json`, Buffer.from(response.data, "base64").toString(), (err) => {
+              if (err) throw err;
+            });
+          })
       })
+      enqueueSnackbar('Menu exported successfully!', { variant:'success', anchorOrigin:{vertical: 'bottom', horizontal: 'right',} });
+    } catch (error) {
+      enqueueSnackbar('Menu not exported!', { variant:'error', anchorOrigin:{vertical: 'bottom', horizontal: 'right',} });
+    }
   }
 
   return (

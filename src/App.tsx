@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import Modal from 'react-modal'
+import { SnackbarProvider } from 'notistack';
 import {
   HashRouter,
   Switch,
-  Route,
-  Redirect,
-  Link
+  Route
 } from "react-router-dom";
 
 import { ThemesProvider } from './hooks/useThemes';
@@ -22,10 +21,8 @@ import { Dashboard } from './pages/Dashboard';
 import { CreateProject } from './pages/Projects/Create';
 import { Login } from './pages/Authentication/Login';
 import { Register } from './pages/Authentication/Register';
+import { Toolkit } from './pages/Toolkit';
 Modal.setAppElement('#root')
-
-
-
 
 export function App() {
   const [token, setToken] = useState("ola");
@@ -57,6 +54,9 @@ export function App() {
             <Route path="/menus">
               <Menus />
             </Route>
+            <Route path="/toolkit">
+              <Toolkit />
+            </Route>
             <Route path="/">
               <Dashboard />
             </Route>
@@ -69,12 +69,14 @@ export function App() {
   return (
     <AppContent>
       <ThemesProvider>
+    <SnackbarProvider maxSnack={3}>
         <HashRouter>
           <Body>
             <Header />
             {authorizedRoutes()}
           </Body>
         </HashRouter>
+        </SnackbarProvider>
         <GlobalStyle />
       </ThemesProvider>
     </AppContent>

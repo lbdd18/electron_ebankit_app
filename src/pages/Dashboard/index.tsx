@@ -8,7 +8,7 @@ export function Dashboard() {
   const {changeTheme} = useThemes();
   return (
     <Container>
-      <Grid spacing={2}>
+      <Grid container spacing={2}>
         <Grid item>
           <Title> Dashboard</Title>
         </Grid>
