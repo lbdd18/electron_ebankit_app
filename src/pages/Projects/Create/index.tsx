@@ -60,7 +60,7 @@ export function CreateProject() {
 	      BaselineProjectDate: new Date(),
 	      TemplateID: projectInput.template,
 	      EnvironmentID: environment.id,
-	      VersionControlID: 'c1f1bcb3-0101-4196-ab3f-8a04975e641c',
+	      VersionControlID: 'c6eeaecb-9162-4ded-aa91-ec9dde810a00',
 	      VersionSettingID: projectInput.version
       });
 
@@ -104,12 +104,12 @@ export function CreateProject() {
                 </Box>
                 <Box paddingBottom={2}>
                 <Field fullWidth={true} variant="outlined" name="template" component={TextField} type="text" label="Template" select={true}>
-                  <MenuItem value="62f76b65-b6f7-48d3-b55c-0876bd1ba6ad">Ebankit</MenuItem>
+                  <MenuItem value="cff6fb27-eb72-41fe-8c69-9536f41ecc15">Ebankit</MenuItem>
                 </Field>
                 </Box>
                 <Box paddingBottom={2}>
                   <Field fullWidth={true} variant="outlined" name="version" component={TextField} type="text" label="Version" select={true}>
-                    <MenuItem value="5dfa256f-d6a3-41ad-922e-1f6ece1abd3f">6.2.0</MenuItem>
+                    <MenuItem value="921019c1-43f3-4c12-9757-b7fc719556d3">6.2.0</MenuItem>
                   </Field>                
                 </Box>
                 <Box paddingBottom={2}>

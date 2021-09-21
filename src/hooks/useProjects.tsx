@@ -30,6 +30,11 @@ interface Environment {
   sqlPassword: string;
 }
 
+interface Site {
+  id: number;
+  name: string;
+}
+
 
 interface Package {
   id: number;
@@ -139,7 +144,7 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
               if (err) throw err;
             });
           })
-    const command = `C:\\Windows\\syswow64\\windowspowershell\\v1.0\\powershell.exe  -ExecutionPolicy Unrestricted -file "${filePath}\\scripts\\DBDeploy.ps1" -ScriptsDirectory "${filePath}\\scripts" -ServerInstance "EBKNTBOOK-0683\\MYSQLEXPRESS" -DestinationDBPrefix "AB_" -DBUsername "sa" -DBPassword "pass123456."`; 
+    const command = `C:\\Windows\\syswow64\\windowspowershell\\v1.0\\powershell.exe  -ExecutionPolicy Unrestricted -file "${filePath}\\scripts\\DBDeploy.ps1" -ScriptsDirectory "${filePath}\\scripts" -ServerInstance "EBKNTBOOK-0909\\SQLEXPRESS" -DestinationDBPrefix "AB_" -DBUsername "sa" -DBPassword "pass123456."`; 
     
     await execShellCommand(command);
   }
@@ -214,6 +219,33 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
     console.log('dbdeploy runned!');
   }
 
+  async function installSites(filePath: string, projectInput: Project){
+    let sites: Site [] = []
+    await api.get('iissite')
+    .then(response => {sites = response.data});
+
+    for (const data of sites) {
+      console.log(`Downloading sites ${data.name}...`);
+      await api.get(`iissite/${data.id}/file`, {
+        headers: {
+          'projectPath': filePath,
+          'projectAlias': projectInput.alias,
+        }
+      })
+      .then(async(response) => {
+        const buff = Buffer.from(response.data, "base64");
+        fs.writeFile(`${filePath}\\${data.name}.ps1`, buff, (err) => {
+          if (err) throw err;
+        });
+
+        const command = `C:\\Windows\\system32\\windowspowershell\\v1.0\\powershell.exe  -ExecutionPolicy Unrestricted -file "${filePath}\\${data.name}.ps1"`; 
+        await execShellCommand(command);
+        
+        fs.unlinkSync(`${filePath}\\${data.name}.ps1`);
+      })
+    };
+  }
+
   async function installProject(projectInput: Project){
     
     const { dialog } = require('electron').remote
@@ -234,7 +266,8 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
 
           if (os.platform() !== 'darwin') {
             // Get and Install Sites
-          
+            await installSites(projectPath, projectInput);
+
             // Get and Install Databases
             await installDatabases(filePath, projectInput);
           }

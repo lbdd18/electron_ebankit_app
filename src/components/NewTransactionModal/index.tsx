@@ -43,9 +43,9 @@ export function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionMo
         </Box>
         <Box>
           <TextField fullWidth={true} variant="outlined" name="application" type="text" label="Application" select={true} onChange={event => setApplication(event.target.value)}>
-            <MenuItem value="f04f94ee-6589-46fb-8d3a-bf1ed0a0bdba">IB</MenuItem>
-            <MenuItem value="a0bc5b1c-dfad-4546-b05b-144cd4cb6c46">IOS</MenuItem>
-            <MenuItem value="1acd96e0-ce45-40bc-9138-b33c66e47a6d">Android</MenuItem>
+            <MenuItem value="15d49ca4-7f8f-4607-93b6-9b427e848e4b">IB</MenuItem>
+            <MenuItem value="bcb9f215-d5ad-447b-8750-e68c2eaa28e2">IOS</MenuItem>
+            <MenuItem value="669306a2-a360-4458-8fb8-46300f7fe830">Android</MenuItem>
           </TextField>
         </Box>
         <Button type="submit" variant='contained' color='primary'>Add</Button>

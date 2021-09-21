@@ -44,7 +44,7 @@ export function MenusProvider({ children }: MenusProviderProps) {
 
   async function createMenu(menuInput: MenuInput) {
     try {
-      const response = await api.post('menu', { name: menuInput.name, applicationID: menuInput.application, projectID: '6229fc71-8152-4d8f-99b8-d61268a29a49' });
+      const response = await api.post('menu', { name: menuInput.name, applicationID: menuInput.application, projectID: 'cc54ba38-46ec-4970-be2c-00276a318f1a' });
       const menu = response.data;
       setMenus([...menus, menu]);
       enqueueSnackbar('Menu created successfully!', { variant:'success', anchorOrigin:{vertical: 'bottom', horizontal: 'right',} });
