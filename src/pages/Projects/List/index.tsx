@@ -2,7 +2,7 @@ import { useProjects } from '../../../hooks/useProjects';
 
 import {Box, Card, CardMedia, CardContent, CardActions, Typography, Button, CircularProgress} from '@material-ui/core'
 import {Chip} from '@mui/material'
-import { ButtonContainer, Container, ContainerHeader, TableContainer, Title } from './styles';
+import { ButtonContainer, Container, ContainerHeader, TableContainer, Title, Logo } from './styles';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -33,9 +33,9 @@ export function ListProjects() {
         <TableContainer>
           {projects.map(project=> {
             return (
-              <Box paddingRight={2} key={project.id} maxWidth="300px">
-                <Card style={{height: '280px'}}>
-                  <CardMedia component="img" height="140" image="https://viagemeturismo.abril.com.br/wp-content/uploads/2011/09/14725706608_06a62c13c6_k.jpg" alt="green iguana"/>
+              <Box paddingRight={2} key={project.id} width="300px">
+                <Card style={{height: '285px'}}>
+                  <CardMedia component={()=><Logo alt='project'/>}/>
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
                       {project.name}

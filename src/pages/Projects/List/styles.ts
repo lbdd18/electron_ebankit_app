@@ -1,4 +1,7 @@
 import styled from 'styled-components'
+import projectImgDark from '../../../assets/STUDIO-projects-bg_dark_3.svg'
+import projectImgLight from '../../../assets/STUDIO-projects-bg_light_3.svg'
+
 
 export const Container = styled.div`
   display: flex;
@@ -29,4 +32,14 @@ export const ButtonContainer = styled.div`
   flex: 1;
   align-items: flex-end;
   justify-content: flex-end;
+`;
+
+interface LogoProps {
+  srcDark: string;
+  srcLight: string;
+}
+
+export const Logo = styled.img.attrs(props => ({
+  src: props.theme.palette.type === 'dark' ? projectImgDark : projectImgLight,
+}))`
 `;

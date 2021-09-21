@@ -22,6 +22,10 @@ import { CreateProject } from './pages/Projects/Create';
 import { Login } from './pages/Authentication/Login';
 import { Register } from './pages/Authentication/Register';
 import { Toolkit } from './pages/Toolkit';
+import { Transactions } from './pages/Transactions';
+import { Users } from './pages/Users';
+import { Settings } from './pages/Settings';
+import { AdminPanel } from './pages/AdminPanel';
 Modal.setAppElement('#root')
 
 export function App() {
@@ -53,6 +57,18 @@ export function App() {
             </Route>
             <Route path="/menus">
               <Menus />
+            </Route>
+            <Route path="/transactions">
+              <Transactions />
+            </Route>
+            <Route path="/users">
+              <Users />
+            </Route>
+            <Route path="/settings">
+              <Settings />
+            </Route>
+            <Route path="/adminpanel">
+              <AdminPanel />
             </Route>
             <Route path="/toolkit">
               <Toolkit />

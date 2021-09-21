@@ -2,6 +2,7 @@ import { createContext, ReactNode, useContext, useState } from "react";
 import { StylesProvider, createTheme, ThemeProvider as MuiThemeProvider, Theme } from '@material-ui/core/styles';
 import teal from '@material-ui/core/colors/teal';
 import { ThemeProvider } from 'styled-components';
+import { indigo } from "@material-ui/core/colors";
 
 interface ThemesProviderProps {
   children: ReactNode;
@@ -22,7 +23,8 @@ export function ThemesProvider({ children }: ThemesProviderProps) {
 
   const myTheme = createTheme({
     palette:{
-      secondary: teal,
+      primary: { main: '#0074E8' },
+      secondary: { main: '#e23' },
       type: toggleDark ? 'dark' : 'light',
     }
   })

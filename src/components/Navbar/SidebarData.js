@@ -1,4 +1,4 @@
-import { FiHome, FiUsers, FiFigma, FiFolder, FiFile, FiLayers, FiSettings} from "react-icons/fi";
+import { FiHome, FiUsers, FiFigma, FiFolder, FiFile, FiLayers, FiSettings, FiDatabase} from "react-icons/fi";
 
 
 export const SidebarData = [
@@ -31,6 +31,11 @@ export const SidebarData = [
     title: 'Settings',
     path: '/settings',
     icon: <FiSettings />
+  },
+  {
+    title: 'Admin Panel',
+    path: '/adminpanel',
+    icon: <FiDatabase />
   },
   {
     title: 'Toolkit',

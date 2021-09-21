@@ -135,7 +135,7 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
     });
   }
 
-  async function runningDBDeploy(filePath: string){
+  async function runningDBDeploy(filePath: string, projectAlias: string){
     console.log(`Running dbdeploy...`);
     await api.get(`dbdeployfile`)
           .then(response => {
@@ -144,7 +144,7 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
               if (err) throw err;
             });
           })
-    const command = `C:\\Windows\\syswow64\\windowspowershell\\v1.0\\powershell.exe  -ExecutionPolicy Unrestricted -file "${filePath}\\scripts\\DBDeploy.ps1" -ScriptsDirectory "${filePath}\\scripts" -ServerInstance "EBKNTBOOK-0909\\SQLEXPRESS" -DestinationDBPrefix "AB_" -DBUsername "sa" -DBPassword "pass123456."`; 
+    const command = `C:\\Windows\\syswow64\\windowspowershell\\v1.0\\powershell.exe  -ExecutionPolicy Unrestricted -file "${filePath}\\scripts\\DBDeploy.ps1" -ScriptsDirectory "${filePath}\\scripts" -ServerInstance "EBKNTBOOK-0909\\SQLEXPRESS" -DestinationDBPrefix "${projectAlias}_" -DBUsername "sa" -DBPassword "pass123456."`; 
     
     await execShellCommand(command);
   }
