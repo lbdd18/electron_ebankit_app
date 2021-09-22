@@ -19,7 +19,8 @@ interface Project {
   instance: string;
   sqlUser: string;
   sqlPassword: string;
-  isInstalled: boolean;
+  isInstalledWindows: boolean;
+  isInstalledMac: boolean;
 }
 
 interface Environment {
@@ -42,6 +43,7 @@ interface Package {
   description: string;
   path: string;
   templateName: string;
+  isMacOS: boolean;
 }
 
 interface PackageFile {
@@ -153,6 +155,13 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
     let packages: Package [] = []
     await api.get('package')
     .then(response => {packages = response.data});
+    
+    if((os.platform() === 'darwin')){
+      packages = packages.filter(p=>p.isMacOS)
+    }else{
+      packages = packages.filter(p=>!p.isMacOS)
+    }
+
     for (const pack of packages) {
       // Get and Install packages
       console.log(`Downloading package ${pack.name}...`);
@@ -215,7 +224,7 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
       fs.unlinkSync(`${filePath}\\${data.name}.zip`);
     };
 
-    await runningDBDeploy(filePath);
+    await runningDBDeploy(filePath, projectInput.alias);
     console.log('dbdeploy runned!');
   }
 
@@ -272,9 +281,11 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
             await installDatabases(filePath, projectInput);
           }
 
-          await api.put(`project/${projectInput.id}`, { 
-            ...projectInput, isInstalled: true
-          }).then(response => {
+          const projecttoupdate = projectInput;
+          projecttoupdate.isInstalledWindows = (os.platform() !== 'darwin');
+          projecttoupdate.isInstalledMac = (os.platform() === 'darwin');
+
+          await api.put(`project/${projectInput.id}`, {...projecttoupdate}).then(response => {
               api.get('project')
                 .then(response => {console.log(response.data);setProjects(response.data)})
           });
