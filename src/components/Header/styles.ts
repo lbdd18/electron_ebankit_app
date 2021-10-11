@@ -2,10 +2,10 @@ import styled, { css } from 'styled-components'
 
 export const Container = styled.header`
   width: 100%;
-  background-color: ${props => props.theme.palette.primary.dark};
+  background-color: ${props => props.theme.palette.primary.main};
   min-height: 40px;
-  position: relative;
   -webkit-app-region: drag;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;

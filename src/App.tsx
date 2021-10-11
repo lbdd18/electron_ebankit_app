@@ -4,18 +4,20 @@ import { SnackbarProvider } from 'notistack';
 import {
   HashRouter,
   Switch,
-  Route
+  Route,
+  Redirect
 } from "react-router-dom";
 
 import { ThemesProvider } from './hooks/useThemes';
 
 import { GlobalStyle } from './styles/global'
-import {AppContent, Body, Container, Content } from './styles'
+import {AppContent, Body, Container, Content, LeftSection, ContentRoute} from './styles'
+
+import logoImg from './assets/logo_studio.svg'
 
 import Header from './components/Header'
 import { Navbar } from './components/Navbar'
-import { Authentication } from './pages/Authentication'
-import { Menus } from './pages/Menus';
+import { ListMenus } from './pages/Menus/List';
 import { Projects } from './pages/Projects';
 import { Dashboard } from './pages/Dashboard';
 import { CreateProject } from './pages/Projects/Create';
@@ -26,56 +28,88 @@ import { Transactions } from './pages/Transactions';
 import { Users } from './pages/Users';
 import { Settings } from './pages/Settings';
 import { AdminPanel } from './pages/AdminPanel';
+import { MenusProvider } from './hooks/useMenus';
+import { VersionSettingsProvider } from './hooks/useVersionSettings';
+import { Grid } from '@material-ui/core';
 Modal.setAppElement('#root')
 
 export function App() {
   const [token, setToken] = useState("ola");
 
   function PrivateRoute ({ children, ...rest }) {
-    console.log(children);
+    if(token){
+      return (
+        <Route {...rest}>
+          <Navbar setToken={setToken}/>
+          <ContentRoute>
+            {children}
+          </ContentRoute>
+        </Route>
+      )
+    }
+
     return (
-      <Route {...rest}>
-        {children}
-      </Route>
+      <Redirect to='/login' />
     )
+    
   }
 
-  function authorizedRoutes(){
+  function routes(){
     return(
       <Container>
-        <Navbar setToken={setToken}/>
         <Content>
           <Switch>
             <Route path="/register">
-              <Register setToken={setToken}/>
+              <Grid item xs={6}>
+                <LeftSection>
+                  <img src={logoImg}/>
+                </LeftSection>
+              </Grid>
+              <Grid item xs={6}>
+                <Register setToken={setToken}/>
+              </Grid>
             </Route>
-            <Route path="/projects">
+            <Route path="/login">
+              <Grid item xs={6}>
+                <LeftSection>
+                  <img src={logoImg}/>
+                </LeftSection>
+              </Grid>
+              <Grid item xs={6}>
+                <Login setToken={setToken}/>
+              </Grid>
+            </Route>
+            <PrivateRoute path="/projects">
               <Projects />
-            </Route>
-            <Route path="/createproject">
+            </PrivateRoute>
+            <PrivateRoute path="/createproject">
               <CreateProject />
-            </Route>
-            <Route path="/menus">
-              <Menus />
-            </Route>
-            <Route path="/transactions">
+            </PrivateRoute>
+            <PrivateRoute path="/menus">
+              <MenusProvider>
+                <ListMenus />
+              </MenusProvider>
+            </PrivateRoute>
+            <PrivateRoute path="/transactions">
               <Transactions />
-            </Route>
-            <Route path="/users">
+            </PrivateRoute>
+            <PrivateRoute path="/users">
               <Users />
-            </Route>
-            <Route path="/settings">
+            </PrivateRoute>
+            <PrivateRoute path="/settings">
               <Settings />
-            </Route>
-            <Route path="/adminpanel">
-              <AdminPanel />
-            </Route>
-            <Route path="/toolkit">
+            </PrivateRoute>
+            <PrivateRoute path="/adminpanel">
+              <VersionSettingsProvider>
+                <AdminPanel />
+              </VersionSettingsProvider>
+            </PrivateRoute>
+            <PrivateRoute path="/toolkit">
               <Toolkit />
-            </Route>
-            <Route path="/">
+            </PrivateRoute>
+            <PrivateRoute path="/">
               <Dashboard />
-            </Route>
+            </PrivateRoute>
           </Switch>
         </Content>
       </Container>
@@ -89,7 +123,7 @@ export function App() {
         <HashRouter>
           <Body>
             <Header />
-            {authorizedRoutes()}
+            {routes()}
           </Body>
         </HashRouter>
         </SnackbarProvider>

@@ -27,30 +27,3 @@ export const Container = styled.form`
     }
   }
 `
-
-export const TransactionTypeContainer = styled.div`
-  margin: 1rem 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
-`
-export const Select = styled.select`
-  width: 100%;
-  padding: 0 1.5rem;
-  height: 4rem;
-  border-radius: 0.25rem;
-
-  border: 1px solid #d7d7d7;
-  background: #e7e9ee;
-  font-size: 1rem;
-  margin-top: 1.5rem;
-
-  option {
-    color: black;
-    background: #e7e9ee;
-    display: flex;
-    white-space: pre;
-    min-height: 20px;
-    padding: 0px 2px 1px;
-  }
-`;

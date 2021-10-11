@@ -1,4 +1,7 @@
 import styled from 'styled-components'
+import { Typography } from '@material-ui/core';
+
+
 
 export const Container = styled.div`
   display: flex;
@@ -7,7 +10,7 @@ export const Container = styled.div`
   margin: 4rem;
 `;
 
-export const Title = styled.label`
+export const Title = styled(Typography)`
   height: 400;
   font-size: 2rem;
 `;

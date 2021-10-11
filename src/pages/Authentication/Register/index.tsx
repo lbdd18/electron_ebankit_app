@@ -14,10 +14,10 @@ export function Register({setToken}) {
     <Container>
       <Grid spacing={2}>
         <Grid item>
-          <Title>Register</Title>
+          <Title color="textPrimary">Register</Title>
         </Grid>
         <Link to="/login" style={{ textDecoration: 'none' }} >
-          <Button variant="contained" color="primary">Login</Button>
+          <Button variant="text" color="primary">Back to Login</Button>
         </Link>
       </Grid>
     </Container>

@@ -192,7 +192,7 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
 
 
       console.log(`Extracting package ${pack.name}...`);
-      if (os.platform() !== 'darwin') {
+      if (os.platform() === 'darwin') {
         const command = `unzip ${path.join(filePath, `${pack.name}.zip`)}`;
         try {
           await execShellCommand(command);

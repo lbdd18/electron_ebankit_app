@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { Typography } from '@material-ui/core';
 import projectImgDark from '../../../assets/STUDIO-projects-bg_dark_3.svg'
 import projectImgLight from '../../../assets/STUDIO-projects-bg_light_3.svg'
 
@@ -42,4 +43,15 @@ interface LogoProps {
 export const Logo = styled.img.attrs(props => ({
   src: props.theme.palette.type === 'dark' ? projectImgDark : projectImgLight,
 }))`
+`;
+
+
+export const MenuItemContainer = styled.div`
+  display: flex;
+  flex: 1;
+  align-items:center;
+`
+
+export const MenuItemText = styled(Typography)`
+margin-left: 8px;
 `;

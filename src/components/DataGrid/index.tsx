@@ -4,8 +4,6 @@ import {useGridSlotComponentProps} from '@material-ui/data-grid'
 import Pagination from '@material-ui/lab/Pagination';
 import PaginationItem from '@material-ui/lab/PaginationItem';
 
-import * as FaIcons from "react-icons/fa"
-
 import { useMenus } from "../../hooks/useMenus";
 
 import { Container, DataGridContainer } from "./styles";
@@ -56,52 +54,16 @@ function CustomPagination() {
   );
 }
 
-export function DataGrid() {
-  const { menus, deleteMenu, exportMenu } = useMenus();
+export function DataGrid({rows, columns}: any) {
+  console.log("rows", rows);
   const classes = useStyles();
-  console.log(menus);
-  const columns = [
-    {
-      field: 'name',
-      headerName: 'Name',
-      flex: 1
-    },
-    {
-      field: 'applicationName',
-      headerName: 'Application',
-      flex: 1,
-      valueFormatter: (params) => params.row?.application?.name 
-    },
-    {
-      field: 'id',
-      headerName: "Actions",
-      flex:1,
-      disableClickEventBubbling: true,
-      renderCell: (params: any) => {
-        return (
-          <Grid container spacing={2}>
-            <Grid item>
-              <IconButton aria-label="export" color="default" onClick={()=>exportMenu(params.id)}>
-                <FaIcons.FaFileExport fontSize="medium"/>
-              </IconButton>              
-            </Grid>
-            <Grid item>
-              <IconButton aria-label="delete" color="default" onClick={()=>deleteMenu(params.id)}>
-                <FaIcons.FaTrash fontSize="medium"/>
-              </IconButton>            
-            </Grid>
-          </Grid>
-        );
-      }
-    }
-  ];
 
   return (
     <Container>
       <div style={{ height: 400, width: '100%' }}>
       <DataGridContainer
         className={classes.root}
-        rows={menus}
+        rows={rows}
         columns={columns}
         pageSize={5}
         rowsPerPageOptions={[5]}

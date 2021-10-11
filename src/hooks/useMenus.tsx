@@ -5,12 +5,12 @@ import { useSnackbar } from 'notistack';
 import { api } from "../services/api";
 
 interface Application {
-  id: number;
-  name: string;
+  id: string;
+  name?: string;
 }
 
 interface Menu {
-  id: number;
+  id: string;
   name: string;
   application: Application;
   createdAt: Date;
@@ -39,12 +39,13 @@ export function MenusProvider({ children }: MenusProviderProps) {
 
   useEffect(() => {
     api.get('menu')
-      .then(response => {setMenus(response.data)})
-  }, [])
-
+       .then(response => {setMenus(response.data)})
+  }, []);
+  
   async function createMenu(menuInput: MenuInput) {
     try {
-      const response = await api.post('menu', { name: menuInput.name, applicationID: menuInput.application, projectID: 'cc54ba38-46ec-4970-be2c-00276a318f1a' });
+      console.log({ name: menuInput.name, applicationID: menuInput.application.id, projectID: 'cc54ba38-46ec-4970-be2c-00276a318f1a' });
+      const response = await api.post('menu', { name: menuInput.name, applicationID: menuInput.application.id, projectID: 'cc54ba38-46ec-4970-be2c-00276a318f1a' });
       const menu = response.data;
       setMenus([...menus, menu]);
       enqueueSnackbar('Menu created successfully!', { variant:'success', anchorOrigin:{vertical: 'bottom', horizontal: 'right',} });
